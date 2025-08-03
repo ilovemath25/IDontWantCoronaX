@@ -8,7 +8,7 @@ from src.Scene.scene4 import Scene4
 class App:
     def __init__(self):
         self.AppState = "START"
-        self.GameState = "MENU"
+        self.GameState = "SCENE3"
         self.scene = None
         self.group = pygame.sprite.LayeredUpdates()
 

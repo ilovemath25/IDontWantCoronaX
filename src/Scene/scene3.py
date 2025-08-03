@@ -1,4 +1,8 @@
 from src.Scene.scene import Scene
+from settings import *
+import pygame
+import os
+from src.Object.Entities.character import Character
 """
 gameplay (main loop)
 - the player is in the past
@@ -11,14 +15,23 @@ gameplay (main loop)
 class Scene3(Scene):
     def __init__(self):
         super().__init__()
+        # self.background = pygame.image.load(os.path.join("assets", "scene3", "background.png")).convert_alpha()
+        self.character = Character((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
+        self.blocks = pygame.sprite.Group()
         
     def start(self, app):
         print("Scene3 started")
+        app.group.add(self.character)
         self.scene_state = "UPDATE"
         
     def update(self, app):
         print("Scene3 updating")
-        if True:
+        dx, dy = self.character.key(self.blocks)
+        for block in self.blocks:
+            # move all blocks
+            block.rect.x -= dx
+            block.rect.y -= dy
+        if False:
             self.scene_state = "END"
             
     def end(self, app):
