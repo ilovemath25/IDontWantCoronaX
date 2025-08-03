@@ -6,6 +6,7 @@ from src.App import App
 clear_cache()
 pygame.init()
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+screen.get_size()
 pygame.display.set_caption("I Dont Want Corona X")
 clock = pygame.time.Clock()
 running = True

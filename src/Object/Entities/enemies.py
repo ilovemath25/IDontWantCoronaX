@@ -10,3 +10,10 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += self.speed
+
+        # animation logic
+        self.frame_counter += self.animation_speed
+        if self.frame_counter >= 1:
+            self.current_frame = (self.current_frame + 1) % len(self.images)
+            self.image = self.images[self.current_frame]
+            self.frame_counter = 0
