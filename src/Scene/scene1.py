@@ -1,5 +1,6 @@
 from src.Scene.scene import Scene
 from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from src.Core.slideSprite import SlideSprite
 import pygame
 import os
 """
@@ -21,8 +22,10 @@ class Scene1(Scene):
         for image in slide_images:
             surf = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT)).convert_alpha()
             surf.blit(image, (0, 0))
-            slide = SlideSprite(surf, screen_size=(SCREEN_WIDTH, SCREEN_HEIGHT), duration=3)
+            slide = SlideSprite(surf, duration=4)
             self.slides.append(slide)
+        if self.slides:
+            app.group.add(self.slides[0])
         self.scene_state = "UPDATE"
 
     def update(self, app):
@@ -51,42 +54,3 @@ class Scene1(Scene):
         self.scene_state = "END"
         app.GameState = "SCENE2"
         app.AppState = "START"
-
-class SlideSprite(pygame.sprite.Sprite):
-    def __init__(self, image, screen_size, duration=2.0, fps=60):
-        super().__init__()
-        self.original_image = image.convert_alpha()
-        self.image = self.original_image.copy()
-        self.rect = self.image.get_rect(topleft=(0, 0))
-        self.screen_size = screen_size
-        self.duration = duration
-        self.fps = fps
-        self.state = "fade_in"
-        self.timer = 0
-        self.fade_steps = int(fps * 0.5)
-        self.hold_steps = int(fps * (duration - 1.0))
-        self.current_step = 0
-
-    def update(self):
-        if self.state == "fade_in":
-            alpha = int(255 * self.current_step / self.fade_steps)
-            self.image = self.original_image.copy()
-            self.image.set_alpha(alpha)
-            self.current_step += 1
-            if self.current_step >= self.fade_steps:
-                self.state = "hold"
-                self.current_step = 0
-        elif self.state == "hold":
-            self.image = self.original_image.copy()
-            self.image.set_alpha(255)
-            self.current_step += 1
-            if self.current_step >= self.hold_steps:
-                self.state = "fade_out"
-                self.current_step = 0
-        elif self.state == "fade_out":
-            alpha = int(255 * (1 - self.current_step / self.fade_steps))
-            self.image = self.original_image.copy()
-            self.image.set_alpha(alpha)
-            self.current_step += 1
-            if self.current_step >= self.fade_steps:
-                self.state = "done"
