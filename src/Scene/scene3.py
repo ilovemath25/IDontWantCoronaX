@@ -14,47 +14,39 @@ gameplay (main loop)
 - the character gave up and eats the bat, and the covid-19 still exists
 """
 class Scene3(Scene):
+    BG_LAYER, EQ_LAYER, CH_LAYER = 0, 3, 5
+
     def __init__(self):
         super().__init__()
-        self.backgrounds = []
-        self.background_index = 0
-        self.character = Character((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
-        self.blocks = pygame.sprite.Group()
-        self.equipments = pygame.sprite.Group()
-        
-    def start(self, app):
-        print("Scene3 started")
-        for i in range(1, 4):
-            img = pygame.image.load(os.path.join("assets", "scene3", f"bg-1.png")).convert_alpha()
-            sprite = pygame.sprite.Sprite()
-            sprite.image = img
-            sprite.rect = img.get_rect(center=(1675, 255))
-            self.backgrounds.append(sprite)
-            self.background_index = 0
+        self.bg_imgs = [pygame.image.load(os.path.join("assets", "scene3", f"bg-{i}.png")).convert_alpha() for i in range(1, 4)]
+        self.bg_idx = 0
+        self.bg = pygame.sprite.Sprite()
+        self.bg._layer = self.BG_LAYER
+        self.bg.image = self.bg_imgs[0]
+        self.bg.rect = self.bg.image.get_rect(center=(1675,255))
 
-        app.group.add(self.backgrounds[self.background_index], layer=0)
-        app.group.add(self.character, layer=5)
-        self.scene_state = "UPDATE"
-        self.equipments.add(
-            Grenade((300, 200)),
-            Gun((600, 400)),
+        self.character = Character((SCREEN_WIDTH//2, SCREEN_HEIGHT//2))
+        self.character._layer = self.CH_LAYER
+
+        self.equipments = pygame.sprite.Group(
+            Grenade((300,200)),
+            Gun((600,400)),
         )
-        for equipment in self.equipments:
-            app.group.add(equipment, layer=3)
-    
+        for e in self.equipments: e._layer = self.EQ_LAYER
+
+        self.blocks = pygame.sprite.Group()
+        self.bg_interval = 10
+
+    def start(self, app):
+        for spr in (self.bg, self.character, *self.equipments):
+            app.group.add(spr, layer=spr._layer)
+        self.scene_state = "UPDATE"
+
     def update(self, app):
-        print("Scene3 updating")
+        t = pygame.time.get_ticks() // self.bg_interval
+        self.bg_idx = t % len(self.bg_imgs)
+        self.bg.image = self.bg_imgs[self.bg_idx]
+
         dx, dy = self.character.key(app, self.blocks, self.equipments)
-        self.backgrounds[self.background_index].rect.x -= dx
-        self.backgrounds[self.background_index].rect.y -= dy
-        for spr in list(self.blocks) + list(self.equipments):
-            spr.rect.x -= dx
-            spr.rect.y -= dy
-        if False:
-            self.scene_state = "END"
-            
-    def end(self, app):
-        print("Scene3 ended")
-        self.scene_state = "END"
-        app.GameState = "SCENE4"
-        app.AppState = "START"
+        for spr in (self.bg, *self.blocks, *self.equipments):
+            spr.rect.move_ip(-dx, -dy)

@@ -8,6 +8,7 @@ class BaseEquip(pygame.sprite.Sprite):
         self.image = pygame.Surface(size, pygame.SRCALPHA)
         self.image.blit(image, (0, 0))
         self.rect = self.image.get_rect(topleft=pos)
+        self.is_used = False
 
     def Use(self):
         print(f"{self.__class__.__name__} used!")
