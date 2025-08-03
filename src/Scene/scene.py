@@ -1,5 +1,5 @@
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT
+from settings import *
 class Scene:
     def __init__(self):
         self.scene_state = "START"

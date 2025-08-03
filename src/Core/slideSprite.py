@@ -1,5 +1,5 @@
 import pygame
-from settings import SCREEN_WIDTH, SCREEN_HEIGHT, FPS
+from settings import *
 class SlideSprite(pygame.sprite.Sprite):
     def __init__(self, image, duration=2.0):
         super().__init__()

@@ -1,4 +1,5 @@
 import pygame
+from src.Scene.menu import Menu
 from src.Scene.scene1 import Scene1
 from src.Scene.scene2 import Scene2
 from src.Scene.scene3 import Scene3
@@ -7,7 +8,7 @@ from src.Scene.scene4 import Scene4
 class App:
     def __init__(self):
         self.AppState = "START"
-        self.GameState = "SCENE1"
+        self.GameState = "MENU"
         self.scene = None
         self.group = pygame.sprite.LayeredUpdates()
 
@@ -16,8 +17,8 @@ class App:
         return self.AppState
 
     def start(self):
-        if self.GameState == "SCENE1":
-            self.scene = Scene1()
+        if self.GameState == "MENU":
+            self.scene = Menu()
         elif self.GameState == "SCENE1":
             self.scene = Scene1()
         elif self.GameState == "SCENE2":
