@@ -1,7 +1,8 @@
-from src.Scene.scene import Scene
-from settings import *
 import pygame
 import os
+from src.Scene.scene import Scene
+from settings import *
+from src.Object.Equipment import *
 from src.Object.Entities.character import Character
 """
 gameplay (main loop)
@@ -15,22 +16,40 @@ gameplay (main loop)
 class Scene3(Scene):
     def __init__(self):
         super().__init__()
-        # self.background = pygame.image.load(os.path.join("assets", "scene3", "background.png")).convert_alpha()
+        self.backgrounds = []
+        self.background_index = 0
         self.character = Character((SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
         self.blocks = pygame.sprite.Group()
+        self.equipments = pygame.sprite.Group()
         
     def start(self, app):
         print("Scene3 started")
-        app.group.add(self.character)
+        for i in range(1, 4):
+            img = pygame.image.load(os.path.join("assets", "scene3", f"bg-1.png")).convert_alpha()
+            sprite = pygame.sprite.Sprite()
+            sprite.image = img
+            sprite.rect = img.get_rect(center=(1675, 255))
+            self.backgrounds.append(sprite)
+            self.background_index = 0
+
+        app.group.add(self.backgrounds[self.background_index], layer=0)
+        app.group.add(self.character, layer=5)
         self.scene_state = "UPDATE"
-        
+        self.equipments.add(
+            Grenade((300, 200)),
+            Gun((600, 400)),
+        )
+        for equipment in self.equipments:
+            app.group.add(equipment, layer=3)
+    
     def update(self, app):
         print("Scene3 updating")
-        dx, dy = self.character.key(self.blocks)
-        for block in self.blocks:
-            # move all blocks
-            block.rect.x -= dx
-            block.rect.y -= dy
+        dx, dy = self.character.key(app, self.blocks, self.equipments)
+        self.backgrounds[self.background_index].rect.x -= dx
+        self.backgrounds[self.background_index].rect.y -= dy
+        for spr in list(self.blocks) + list(self.equipments):
+            spr.rect.x -= dx
+            spr.rect.y -= dy
         if False:
             self.scene_state = "END"
             
